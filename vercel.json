@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "public/index.php",
+      "use": "vercel-php@0.7.1"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(css|js|images)/(.*)",
+      "dest": "public/$1/$2"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "public/index.php"
+    }
+  ],
+  "env": {
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_URL": "https://your-app-name.vercel.app",
+    "CACHE_DRIVER": "array",
+    "SESSION_DRIVER": "array"
+  }
+}
