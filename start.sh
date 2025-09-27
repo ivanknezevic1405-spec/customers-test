@@ -17,28 +17,42 @@ else
     echo "✅ APP_KEY is set"
 fi
 
-# Clear caches (skip database cache if DB not ready)
+# Clear application caches (non-database dependent)
 echo "🧹 Clearing application caches..."
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# Try to clear cache table, but don't fail if DB isn't ready
-echo "🧹 Attempting to clear database cache..."
-php artisan cache:clear || echo "⚠️  Database cache clearing failed (DB might not be ready)"
-
 # Publish and ensure Filament assets are available
 echo "📦 Publishing Filament assets..."
 php artisan filament:assets
 
-# Run database migrations
+# Check database connection
+echo "🔍 Checking database connection..."
+php artisan tinker --execute="DB::connection()->getPdo(); echo 'Database connection successful!';"
+
+# Run database migrations (this creates tables if they don't exist)
 echo "📊 Running database migrations..."
 php artisan migrate --force --no-interaction
+
+# Show migration status for debugging
+echo "📋 Migration status:"
+php artisan migrate:status
+
+# Now we can safely clear database cache
+echo "🧹 Clearing database cache..."
+php artisan cache:clear
 
 # Seed database if needed (optional)
 if [ "$SEED_DATABASE" = "true" ]; then
     echo "🌱 Seeding database..."
     php artisan db:seed --force --no-interaction
+fi
+
+# Create admin user if environment variables are provided
+if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
+    echo "👤 Creating admin user..."
+    php artisan admin:create --name="$ADMIN_NAME" --email="$ADMIN_EMAIL" --password="$ADMIN_PASSWORD" || echo "⚠️  Admin user might already exist"
 fi
 
 # Clear any existing caches and optimize for production
