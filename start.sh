@@ -17,12 +17,15 @@ else
     echo "✅ APP_KEY is set"
 fi
 
-# Clear all caches first
-echo "🧹 Clearing all caches..."
-php artisan cache:clear
+# Clear caches (skip database cache if DB not ready)
+echo "🧹 Clearing application caches..."
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
+
+# Try to clear cache table, but don't fail if DB isn't ready
+echo "🧹 Attempting to clear database cache..."
+php artisan cache:clear || echo "⚠️  Database cache clearing failed (DB might not be ready)"
 
 # Publish and ensure Filament assets are available
 echo "📦 Publishing Filament assets..."
