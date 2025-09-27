@@ -15,15 +15,15 @@
   "env": {
     "APP_ENV": "production",
     "APP_DEBUG": "false",
-    "CACHE_DRIVER": "file",
-    "SESSION_DRIVER": "file",
+    "CACHE_DRIVER": "array",
+    "SESSION_DRIVER": "array",
     "VIEW_COMPILED_PATH": "/tmp/views",
-    "LOG_CHANNEL": "stderr",
-    "APP_STORAGE_PATH": "/tmp"
+    "LOG_CHANNEL": "stderr"
   },
   "functions": {
     "public/index.php": {
       "runtime": "vercel-php@0.7.1"
     }
-  }
+  },
+  "buildCommand": "./build.sh"
 }
