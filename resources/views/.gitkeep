@@ -1,0 +1,3 @@
+# This file ensures the views directory is tracked by Git
+# even when it's empty. This prevents deployment issues 
+# when Laravel tries to cache views.

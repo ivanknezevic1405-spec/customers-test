@@ -59,7 +59,14 @@ fi
 echo "⚡ Optimizing for production..."
 php artisan config:cache
 php artisan route:cache
-php artisan view:cache
+
+# Only cache views if there are views to cache
+if [ "$(find resources/views -name '*.blade.php' | wc -l)" -gt 0 ]; then
+    php artisan view:cache
+else
+    echo "⚠️  No blade views found, skipping view cache"
+fi
+
 php artisan optimize
 
 # Start the application server
