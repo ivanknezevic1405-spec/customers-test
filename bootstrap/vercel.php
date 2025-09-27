@@ -41,3 +41,9 @@ if (!function_exists('storage_path_override')) {
         file_put_contents('/tmp/storage/framework/cache/config.php', '<?php return [];');
     }
 }
+
+// Run database migrations if needed
+require_once __DIR__ . '/migrate.php';
+
+// Create admin user if needed
+require_once __DIR__ . '/seed.php';
