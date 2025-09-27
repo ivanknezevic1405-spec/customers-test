@@ -1,6 +1,6 @@
 FROM php:8.2-cli
 
-# Install dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -9,10 +9,14 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev
+    libpq-dev \
+    libzip-dev \
+    libicu-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -20,11 +24,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
+# Copy composer files first for better caching
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies (ignore platform requirements for Docker)
+RUN composer install --optimize-autoloader --no-dev --no-scripts --no-autoloader
+
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --optimize-autoloader --no-dev
+# Complete composer setup
+RUN composer dump-autoload --optimize
 
 # Create storage directories
 RUN mkdir -p storage/framework/cache/data \
@@ -36,11 +46,11 @@ RUN mkdir -p storage/framework/cache/data \
 # Set permissions
 RUN chmod -R 775 storage bootstrap/cache
 
-# Generate application key
-RUN php artisan key:generate --force
+# Make startup script executable
+RUN chmod +x start.sh
 
 # Expose port
 EXPOSE $PORT
 
-# Start server
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+# Use startup script
+CMD ["./start.sh"]
