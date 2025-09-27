@@ -3,6 +3,12 @@ set -e
 
 echo "🚀 Starting Laravel application..."
 
+# Ensure APP_URL is set for production
+if [ "$APP_ENV" = "production" ] && [ -z "$APP_URL" ]; then
+    echo "⚠️  Setting default APP_URL for production..."
+    export APP_URL="https://customers-test.onrender.com"
+fi
+
 # Generate application key if not set
 if [ -z "$APP_KEY" ]; then
     echo "⚠️  APP_KEY not set, generating one..."
@@ -10,6 +16,13 @@ if [ -z "$APP_KEY" ]; then
 else
     echo "✅ APP_KEY is set"
 fi
+
+# Clear all caches first
+echo "🧹 Clearing all caches..."
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
 
 # Publish and ensure Filament assets are available
 echo "📦 Publishing Filament assets..."
