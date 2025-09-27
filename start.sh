@@ -13,7 +13,7 @@ fi
 
 # Publish and ensure Filament assets are available
 echo "📦 Publishing Filament assets..."
-php artisan filament:assets --force
+php artisan filament:assets
 
 # Run database migrations
 echo "📊 Running database migrations..."
