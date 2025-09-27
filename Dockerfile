@@ -36,6 +36,9 @@ COPY . .
 # Complete composer setup
 RUN composer dump-autoload --optimize
 
+# Publish Filament assets
+RUN php artisan filament:assets
+
 # Create storage directories
 RUN mkdir -p storage/framework/cache/data \
     storage/framework/sessions \

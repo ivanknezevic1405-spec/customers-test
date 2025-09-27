@@ -11,6 +11,10 @@ else
     echo "✅ APP_KEY is set"
 fi
 
+# Publish and ensure Filament assets are available
+echo "📦 Publishing Filament assets..."
+php artisan filament:assets --force
+
 # Run database migrations
 echo "📊 Running database migrations..."
 php artisan migrate --force --no-interaction
@@ -21,11 +25,12 @@ if [ "$SEED_DATABASE" = "true" ]; then
     php artisan db:seed --force --no-interaction
 fi
 
-# Cache configuration for production
-echo "⚡ Caching configuration..."
+# Clear any existing caches and optimize for production
+echo "⚡ Optimizing for production..."
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+php artisan optimize
 
 # Start the application server
 echo "🎉 Starting PHP server on port $PORT..."
