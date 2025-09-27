@@ -1,4 +1,4 @@
-FROM php:8.2-cli
+FROM php:8.3-cli
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -27,8 +27,8 @@ WORKDIR /var/www
 # Copy composer files first for better caching
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies (ignore platform requirements for Docker)
-RUN composer install --optimize-autoloader --no-dev --no-scripts --no-autoloader
+# Install PHP dependencies 
+RUN composer install --optimize-autoloader --no-dev --no-scripts
 
 # Copy application files
 COPY . .
