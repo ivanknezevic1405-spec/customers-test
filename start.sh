@@ -9,6 +9,14 @@ if [ "$APP_ENV" = "production" ] && [ -z "$APP_URL" ]; then
     export APP_URL="https://customers-test.onrender.com"
 fi
 
+# Set secure session settings for production
+if [ "$APP_ENV" = "production" ]; then
+    echo "🔒 Configuring secure session settings for production..."
+    export SESSION_SECURE_COOKIE=true
+    export SESSION_HTTP_ONLY=true
+    export SESSION_SAME_SITE=lax
+fi
+
 # Generate application key if not set
 if [ -z "$APP_KEY" ]; then
     echo "⚠️  APP_KEY not set, generating one..."
